@@ -12,7 +12,7 @@
       
 // Define constants to be used later on
 #define HW_TIMER_INTERVAL_MS 10
-#define TIMER_INTERVAL_S 5
+#define TIMER_INTERVAL_S 60
 
 bool volatile is_interrupt_1_enabled = false;
 float temperature, humidity;
