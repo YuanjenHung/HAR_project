@@ -158,6 +158,7 @@ void subscribeToPeripheral(BLEDevice peripheral) {
         connectToPeripheral(peripheral);
     }
     
+    BLE.advertise();
     while (peripheral.connected()) {
         if (hoppingAmbientCharacteristic.valueUpdated()) {
             hoppingAmbientCharacteristic.readValue(light);
