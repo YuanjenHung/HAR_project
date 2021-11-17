@@ -42,7 +42,7 @@ void TimerHandler(void){
     ISR_Timer.run();
 }
 
-void updateWeather(){
+void update(){
     temperature = HTS.readTemperature();
     humidity = HTS.readHumidity();
     while(!APDS.colorAvailable()) delay(10);
@@ -76,7 +76,7 @@ void setup() {
     // Set up the timer and disable it
     ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_MS * 1000, TimerHandler);
     ISR_Timer.setInterval(TIMER_INTERVAL_S * 1000, enable_interrupt_1);
-    ISR_Timer.disableAll();
+    ISR_Timer.enableAll();
 
     // Set device name, local name and advertised service
     BLE.setLocalName("Bedroom Main");
@@ -96,18 +96,15 @@ void setup() {
 }
 
 void loop(){
-    BLE.advertise();
-    digitalWrite(LED_BUILTIN, LOW);
-    ISR_Timer.disableAll();
+    if (BLE.connected()) {
+        digitalWrite(LED_BUILTIN, HIGH);
+    } else {
+        digitalWrite(LED_BUILTIN, LOW);
+        BLE.advertise();
+    }
 
-    while(!BLE.connected());
-    digitalWrite(LED_BUILTIN, HIGH);
-    ISR_Timer.enableAll();
-
-    while(BLE.connected()){
-        if (is_interrupt_1_enabled){
-            updateWeather();
-            is_interrupt_1_enabled = false;
-        }
-    } 
+    if (is_interrupt_1_enabled){
+        update();
+        is_interrupt_1_enabled = false;
+    }
 }
