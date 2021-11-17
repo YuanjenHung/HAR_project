@@ -41,18 +41,18 @@ float parse_float(unsigned char b[]){
 }
 
 void setup() {
-    Serial.begin(115200);
-    while (!Serial);
+    // Serial.begin(115200);
+    // while (!Serial);
     pinMode(LED_BUILTIN, OUTPUT);
 
     // begin initialization
     if (!BLE.begin()) {
-        Serial.println("starting BLE failed!");
+        // Serial.println("starting BLE failed!");
 
         while (1);
     }
 
-    Serial.println("BLE Central scan");
+    // Serial.println("BLE Central scan");
 
     // Set device name, local name and advertised service
     BLE.setLocalName("Hopping Bathroom");
@@ -82,34 +82,34 @@ void checkPeripheral() {
     BLEDevice peripheral = BLE.available();
     if (peripheral) {
         // discovered a peripheral
-        Serial.println("Discovered a peripheral");
-        Serial.println("-----------------------");
+        // Serial.println("Discovered a peripheral");
+        // Serial.println("-----------------------");
 
         // print address
-        Serial.print("Address: ");
-        Serial.println(peripheral.address());
+        // Serial.print("Address: ");
+        // Serial.println(peripheral.address());
 
         // print the local name, if present
         if (peripheral.hasLocalName()) {
-            Serial.print("Local Name: ");
-            Serial.println(peripheral.localName());
+            // Serial.print("Local Name: ");
+            // Serial.println(peripheral.localName());
         }
 
         // print the advertised service UUIDs, if present
         if (peripheral.hasAdvertisedServiceUuid()) {
-            Serial.print("Service UUIDs: ");
+            // Serial.print("Service UUIDs: ");
             for (int i = 0; i < peripheral.advertisedServiceUuidCount(); i++) {
-                Serial.print(peripheral.advertisedServiceUuid(i));
-                Serial.print(" ");
+                // Serial.print(peripheral.advertisedServiceUuid(i));
+                // Serial.print(" ");
             }
-            Serial.println();
+            // Serial.println();
         }
 
         // print the RSSI
-        Serial.print("RSSI: ");
-        Serial.println(peripheral.rssi());
+        // Serial.print("RSSI: ");
+        // Serial.println(peripheral.rssi());
 
-        Serial.println();
+        // Serial.println();
 
         BLE.stopScan();
         connectToPeripheral(peripheral);
@@ -117,27 +117,27 @@ void checkPeripheral() {
 }
 
 void connectToPeripheral(BLEDevice peripheral) {
-    Serial.println("- Connecting to peripheral device...");
+    // Serial.println("- Connecting to peripheral device...");
 
     if (peripheral.connect()) {
-        Serial.println("* Connected to peripheral device!");
-        Serial.println(" ");
+        // Serial.println("* Connected to peripheral device!");
+        // Serial.println(" ");
     } else {
-        Serial.println("* Connection to peripheral device failed!");
-        Serial.println(" ");
+        // Serial.println("* Connection to peripheral device failed!");
+        // Serial.println(" ");
     }
     subscribeToPeripheral(peripheral);
 }
 
 void subscribeToPeripheral(BLEDevice peripheral) {
     
-    Serial.println("- Discovering peripheral device attributes...");
+    // Serial.println("- Discovering peripheral device attributes...");
     if (peripheral.discoverAttributes()) {
-        Serial.println("* Peripheral device attributes discovered!");
-        Serial.println(" ");
+        // Serial.println("* Peripheral device attributes discovered!");
+        // Serial.println(" ");
     } else {
-        Serial.println("* Peripheral device attributes discovery failed!");
-        Serial.println(" ");
+        // Serial.println("* Peripheral device attributes discovery failed!");
+        // Serial.println(" ");
         peripheral.disconnect();
         connectToPeripheral(peripheral);
     }
@@ -147,27 +147,27 @@ void subscribeToPeripheral(BLEDevice peripheral) {
     BLECharacteristic hoppingTemperatureCharacteristic = peripheral.characteristic(hoppingTemperatureCharacteristicUuid);
         
     if (!hoppingAmbientCharacteristic || !hoppingHumidityCharacteristic || !hoppingTemperatureCharacteristic) {
-        Serial.println("* Peripheral device does not have such characteristic!");
+        // Serial.println("* Peripheral device does not have such characteristic!");
         peripheral.disconnect();
-        return;
+        connectToPeripheral(peripheral);
     } 
 
     if (!hoppingAmbientCharacteristic.subscribe() || !hoppingHumidityCharacteristic.subscribe() || !hoppingTemperatureCharacteristic.subscribe()) {
-        Serial.println("Subscription failed!");
+        // Serial.println("Subscription failed!");
         peripheral.disconnect();
-        return;
+        connectToPeripheral(peripheral);
     }
     
     while (peripheral.connected()) {
         if (hoppingAmbientCharacteristic.valueUpdated()) {
             hoppingAmbientCharacteristic.readValue(light);
-            Serial.print("* light: ");
-            Serial.println((int)light);
+            // Serial.print("* light: ");
+            // Serial.println((int)light);
             ambientLightCharacteristic.writeValue(light);
         }
         if (hoppingHumidityCharacteristic.valueUpdated()) {
             hoppingHumidityCharacteristic.readValue(humidity, 4);
-            Serial.print("* humidity: ");
+            // Serial.print("* humidity: ");
             // Serial.println(parse_float(humidity));
             humidityCharacteristic.writeValue(parse_float(humidity));
         }
