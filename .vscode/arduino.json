@@ -1,5 +1,5 @@
 {
-    "board": "arduino:mbed_nano:nano33ble",
+    "board": "arduino:samd:nano_33_iot",
     "port": "/dev/tty.usbmodem14201",
-    "sketch": "pro4.1_bedroomMain/bedroomMain.ino"
+    "sketch": "pro6.1_hopping_bathroom/hopping_bathroom.ino"
 }
